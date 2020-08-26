@@ -1,0 +1,17 @@
+sources:
+        - name: sos
+          domain: sas
+        - name: sus
+          domain: ses
+destinations:
+        - name: mem
+          address: mem.com
+          token: token1
+        - name: mom
+          address: mom.org
+          token: token2
+bridges:
+        - source: sos
+          target: mom
+          period: 300
+          count: 50
