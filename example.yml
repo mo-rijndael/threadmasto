@@ -1,15 +1,19 @@
+base_vk: &base
+        token: xxxxxxxxxxxxxxxxxxxxxxxxxxx
 sources:
-        - name: sos
-          domain: sas
-        - name: sus
-          domain: ses
+        name1:
+                domain: sas
+                token: odkoskdosdosdosd
+        name4:
+                domain: ses
+                <<: *base
 destinations:
-        - name: mem
-          address: mem.com
-          token: token1
-        - name: mom
-          address: mom.org
-          token: token2
+        name2:
+                address: mem.com
+                token: token1
+        name3:
+                address: mom.org
+                token: token2
 bridges:
         - source: sos
           target: mom
