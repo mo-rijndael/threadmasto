@@ -2,17 +2,17 @@ base_vk: &base
         token: xxxxxxxxxxxxxxxxxxxxxxxxxxx
 sources:
         name1:
-                domain: sas
+                screen_name: sas
                 token: odkoskdosdosdosd
         name4:
-                domain: ses
+                screen_name: ses
                 <<: *base
 destinations:
         name2:
-                address: mem.com
+                domain: mem.com
                 token: token1
         name3:
-                address: mom.org
+                domain: mom.org
                 token: token2
 bridges:
         - source: sos
