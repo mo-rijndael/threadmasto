@@ -1,57 +1,52 @@
+import time
 from typing import List, Dict
 
 import yaml
-from mastodon import Mastodon
-import vk
 
-from .types import Publication
-
-class VKPage:
-    "это откуда мы тыбзим"
-    screen_name: str
-    api: vk.API
-
-    def __init__(self, config: Dict):
-        screen_name = config.get("screen_name")
-        token = config.get("token")
-        if not all(screen_name, token):
-            raise ValueError("Invalid source definition")
-        self.screen_name = screen_name
-        self.api = vk.API(vk.Session(access_token=token), v=5.95)
-
-    def get_new(self, last_post_time: int, count: int) -> List[Publication]:
-        pass
-
-
-class MastodonAccount:
-    "это куда мы постим"
-    api: Mastodon
-
-    def __init__(self, config: Dict):
-        node_domain = config.get("domain")
-        token = config.get("token")
-        if not all(node_domain, token):
-            raise ValueError("Invalid destination definition")
-        self.api = Mastodon(access_token=token, api_base_url=node_domain)
-
-    def publish(self, post: Publication):
-        pass
+from exceptions import InvalidConfig
+from modules.destinations.base_dest import Destination
+from modules.sources.base_source import Source
 
 
 class Bridge:
-    "связываем место тыбзинга и место постинга"
-    source: VKPage
-    destination: MastodonAccount
-    last_post_time: int
+    """связываем место тыбзинга и место постинга"""
+    source: Source
+    destination: Destination
+    last_post_time: float
+    last_activation: float
     period: int
-    count: int
+
+    def __init__(self,
+                 source: Source,
+                 destination: Destination,
+                 period: int):
+        self.source = source
+        self.destination = destination
+        self.last_post_time = time.time()
+        self.last_activation = time.time()
+        self.period = period
+
+    def time_to_activation(self) -> float:
+        now = time.time()
+        activation = self.last_activation + self.period
+        return activation - now
+
+    def activate(self):
+        now = time.time()
+        self.last_activation = now
+        posts = self.source.get(self.last_post_time)
+        for p in posts:
+            self.destination.publish(p)
+
+    def ready(self) -> bool:
+        return self.time_to_activation() <= 0
 
 
 class Config:
     "сюда буим парсить короче"
-    sources: Dict[str, VKPage] = {}
-    destinations: Dict[str, MastodonAccount] = {}
-    raw_bridges = List[Dict] = []
+    sources: Dict[str, Source] = {}
+    destinations: Dict[str, Destination] = {}
+    raw_bridges: List[Dict] = []
 
     def __init__(self, file_name: str):
         with open(file_name) as file:
@@ -59,11 +54,19 @@ class Config:
 
         if "sources" in config_dict:
             for name, source in config_dict["sources"].items():
-                self.sources[name] = VKPage(source, self.vk_token)
+                try:
+                    self.sources[name] = VKPage(source)
+                except InvalidConfig as e:
+                    e.file = f"{file_name}/sources/{name}"
+                    raise e
 
         if "destinations" in config_dict:
             for name, destination in config_dict["destinations"].items():
-                self.destinations[name] = MastodonAccount(destination)
+                try:
+                    self.destinations[name] = MastodonAccount(destination)
+                except InvalidConfig as e:
+                    e.file = f"{file_name}/destinations/{name}"
+                    raise e
 
         if "bridges" in config_dict:
             self.raw_bridges = config_dict["bridges"]

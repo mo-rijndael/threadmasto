@@ -2,10 +2,10 @@ base_vk: &base
         token: xxxxxxxxxxxxxxxxxxxxxxxxxxx
 sources:
         name1:
-                screen_name: sas
+                id: 1
                 token: odkoskdosdosdosd
         name4:
-                screen_name: ses
+                id: -1
                 <<: *base
 destinations:
         name2:
