@@ -1,25 +1,26 @@
 import time
+import logging
 from typing import List, Dict
 
 import yaml
 
 from exceptions import InvalidConfig
-from modules.destinations.base_dest import Destination
-from modules.sources.base_source import Source
+import modules
 
 
 class Bridge:
     """связываем место тыбзинга и место постинга"""
-    source: Source
-    destination: Destination
+    source: modules.Source
+    destination: modules.Destination
     last_post_time: float
     last_activation: float
     period: int
 
     def __init__(self,
-                 source: Source,
-                 destination: Destination,
+                 source: modules.Source,
+                 destination: modules.Destination,
                  period: int):
+        print(source, destination, period)
         self.source = source
         self.destination = destination
         self.last_post_time = time.time()
@@ -44,8 +45,8 @@ class Bridge:
 
 class Config:
     "сюда буим парсить короче"
-    sources: Dict[str, Source] = {}
-    destinations: Dict[str, Destination] = {}
+    sources: Dict[str, modules.Source] = {}
+    destinations: Dict[str, modules.Destination] = {}
     raw_bridges: List[Dict] = []
 
     def __init__(self, file_name: str):
@@ -53,20 +54,31 @@ class Config:
             config_dict: dict = yaml.safe_load(file)
 
         if "sources" in config_dict:
+            print(config_dict)
             for name, source in config_dict["sources"].items():
+                path = f"{file_name}/sources/{name}"
                 try:
-                    self.sources[name] = VKPage(source)
+                    type = source["type"]
+                    print(modules.sources[type](source))
+                    self.sources[name] = modules.sources[type](source)
                 except InvalidConfig as e:
-                    e.file = f"{file_name}/sources/{name}"
+                    e.file = path
                     raise e
+                except KeyError:
+                    raise InvalidConfig("No 'type' field.", path)
 
         if "destinations" in config_dict:
             for name, destination in config_dict["destinations"].items():
+                path = f"{file_name}/destinations/{name}"
                 try:
-                    self.destinations[name] = MastodonAccount(destination)
+                    type = destination["type"]
+                    self.destinations[name] = \
+                        modules.destinations[type](destination)
                 except InvalidConfig as e:
-                    e.file = f"{file_name}/destinations/{name}"
+                    e.file = path
                     raise e
+                except KeyError:
+                    raise InvalidConfig("No 'type' field.", path)
 
         if "bridges" in config_dict:
             self.raw_bridges = config_dict["bridges"]
@@ -75,4 +87,23 @@ class Config:
         "нельзя создавать мосты до того,"
         "как все конфиги будут считаны"
         "к тому же класс конфига будет не нужен"
-        pass
+        bridges = []
+        for b in self.raw_bridges:
+            try:
+                source = self.sources[b['source']]
+                destination = self.destinations[b['destination']]
+                interval = b['interval']
+                # TODO: rename to interval everywhere
+            except KeyError as e:
+                logging.fatal(f"Invalid bridge definition. "
+                              f"Missing field {e.args[0]}")
+                raise InvalidConfig("Bad bridge")
+            bridges.append(Bridge(source, destination, interval))
+        return bridges
+
+    def __add__(self, other):
+        return Config(
+                dict(**self.sources, **other.sources),
+                dict(**self.sources, **other.sources),
+                [*self.raw_bridges, *other.raw_bridges],
+                )

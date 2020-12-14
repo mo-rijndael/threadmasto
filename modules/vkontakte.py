@@ -1,10 +1,11 @@
 import vk
 
-from .base_source import Source
 from exceptions import InvalidConfig
 from publication import Publication
+from . import Source
 
 
+@Source.register("vk")
 class VKSource(Source):
     token: str
     id: int

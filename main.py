@@ -3,40 +3,52 @@ import logging
 import sys
 import os
 from getpass import getuser
+from functools import reduce
+import operator
 
 from config import Config, Bridge
 from exceptions import InvalidConfig
 
 
 def load_configuration(config_dir: str) -> Config:
-    configs = os.listdir(config_dir)
-    if not configs:
-        raise ValueError
-    configs.sort()
-    config = filter(lambda file: file.endswith(".yaml")
-                    or file.endswith(".yml"))
-    configs = map(lambda path: config_dir+path, configs)
-    configs = map(Config, configs)
-    config = sum(configs)
-    return config
+    if not config_dir.endswith('/'):
+        config_dir += '/'
+    if os.path.exists(config_dir) and os.path.isdir(config_dir):
+        configs = os.listdir(config_dir)
+        if not configs:
+            raise ValueError
+        configs.sort()
+        parsed = []
+        for c in configs:
+            if c.endswith('.yaml') or c.endswith('.yml'):
+                parsed.append(Config(config_dir+c))
+
+        return reduce(operator.add, parsed)
+    else:
+        raise InvalidConfig("config directory not exists", config_dir)
 
 
-user = getuser()
-if user == "root":
-    logging.warning("running under root is VERY DANGEROUS.")
+def main():
+    user = getuser()
+    if user == "root":
+        logging.warning("running under root is VERY DANGEROUS.")
 
-try:
-    config = load_configuration("conf.d/")
-    bridges = config.make_bridges()
-except InvalidConfig as e:
-    sys.exit(e)
+    try:
+        config = load_configuration("conf.d/")
+        bridges = config.make_bridges()
+    except InvalidConfig as e:
+        sys.exit(e)
 
-while True:
-    for bridge in filter(Bridge.ready, bridges):
-        bridge.activate()
+    while True:
+        for bridge in filter(Bridge.ready, bridges):
+            bridge.activate()
 
-    nearest = min(bridges, key=Bridge.time_to_activation)
-    time.sleep(nearest.time_to_activation())
+        nearest = min(bridges, key=Bridge.time_to_activation)
+        time.sleep(nearest.time_to_activation())
+
+
+if __name__ == "__main__":
+    main()
 # план значит:
 # 1) если мы запущены от рута, сообщаем автору, что у него атрофирован мозг
 #    при этом продолжаем работать

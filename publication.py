@@ -1,8 +1,8 @@
 from typing import List, Dict, Any
 
+
 class Attachment:
     link: str
-    type: str
 
     def __init__(self, object_: Dict[str, Any]):
         ...
