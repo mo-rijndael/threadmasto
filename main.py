@@ -6,11 +6,11 @@ from getpass import getuser
 from functools import reduce
 import operator
 
-from config import Config, Bridge
+from config import BridgeConfig, Bridge
 from exceptions import InvalidConfig
 
 
-def load_configuration(config_dir: str) -> Config:
+def load_configuration(config_dir: str) -> BridgeConfig:
     if not config_dir.endswith('/'):
         config_dir += '/'
     if os.path.exists(config_dir) and os.path.isdir(config_dir):
@@ -21,7 +21,7 @@ def load_configuration(config_dir: str) -> Config:
         parsed = []
         for c in configs:
             if c.endswith('.yaml') or c.endswith('.yml'):
-                parsed.append(Config(config_dir+c))
+                parsed.append(BridgeConfig(config_dir + c))
 
         return reduce(operator.add, parsed)
     else:

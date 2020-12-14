@@ -43,7 +43,7 @@ class Bridge:
         return self.time_to_activation() <= 0
 
 
-class Config:
+class BridgeConfig:
     "сюда буим парсить короче"
     sources: Dict[str, modules.Source] = {}
     destinations: Dict[str, modules.Destination] = {}
@@ -102,7 +102,7 @@ class Config:
         return bridges
 
     def __add__(self, other):
-        return Config(
+        return BridgeConfig(
                 dict(**self.sources, **other.sources),
                 dict(**self.sources, **other.sources),
                 [*self.raw_bridges, *other.raw_bridges],
