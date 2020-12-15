@@ -34,7 +34,7 @@ def main():
         logging.warning("running under root is VERY DANGEROUS.")
 
     try:
-        config = load_configuration("conf.d/")
+        config = load_configuration("path.d/")
         bridges = config.make_bridges()
     except InvalidConfig as e:
         sys.exit(e)
