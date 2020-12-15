@@ -1,10 +1,10 @@
-from typing import List, Dict, Any
+from typing import List
 
 
 class Attachment:
     link: str
 
-    def __init__(self, object_: Dict[str, Any]):
+    def __init__(self, link: str):
         ...
 
 
