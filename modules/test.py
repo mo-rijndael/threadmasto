@@ -17,5 +17,5 @@ class TestDest(Destination):
     def __init__(self, _):
         pass
 
-    def publish(self, _):
-        print("publishing...", _)
+    def publish(self, post: Publication):
+        print("publishing...", post.plain_text, post.attachments)

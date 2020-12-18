@@ -4,6 +4,7 @@ from enum import IntEnum
 
 import requests
 
+
 class AttachmentType(IntEnum):
     AUDIO = 1
     PICTURE = 2
@@ -51,9 +52,13 @@ class Attachment:
             self._download()
             return self.fd
 
+
 class Publication:
     plain_text: str
     attachments: List[Attachment]
 
-    def __init__(self, text, attachments):
-        ...
+    def __init__(self, text="", attachments=None):
+        if attachments is None:
+            attachments = list()
+        self.plain_text = text
+        self.attachments = attachments

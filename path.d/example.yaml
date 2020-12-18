@@ -1,6 +1,8 @@
 sources:
         lmao:
-                type: test
+                type: vk
+                token:
+                target: -198326335
 
 destinations:
         gay:
@@ -9,7 +11,4 @@ destinations:
 bridges:
         - source: lmao
           destination: gay
-          interval: 10
-        - source: lmao
-          destination: gay
-          interval: 15
+          interval: 30

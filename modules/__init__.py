@@ -13,27 +13,19 @@ destinations: Dict[str, 'Destination'] = dict()
 
 class Destination(ABC):
     @abstractmethod
-    def __init__(self, config: Dict[str, Any]):
-        pass
-
-    @abstractmethod
     def publish(self, publication: Publication):
         pass
 
     @staticmethod
-    def register(name: str):
+    def register(destination_name: str):
         def decorator(dest):
             if not isinstance(dest, Destination.__class__):
                 raise ValueError("must inherit from Destination class")
-            destinations[name] = dest
+            destinations[destination_name] = dest
         return decorator
 
 
 class Source(ABC):
-    @abstractmethod
-    def __init__(self, config: Dict[str, Any]):
-        pass
-
     @abstractmethod
     def get(self, after_timestamp: float) -> List[Publication]:
         pass

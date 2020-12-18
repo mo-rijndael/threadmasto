@@ -25,9 +25,14 @@ class VKSource(Source):
                 self.id = -target['object_id']
             else:
                 raise InvalidConfig("Target must be user or group")
+        else:
+            self.id = id_or_domain
 
     def get(self, after_timestamp: float) -> list:
         posts = self.api.wall.get(owner_id=self.id, count=100, filter='owner')
-        posts = filter(lambda p: p['date'] > after_timestamp, posts)
-        posts = map(Publication, posts)
-        return list(posts)
+        posts = filter(lambda p: p['date'] > after_timestamp, posts['items'])
+        parsed = []
+        for post in posts:
+            text = post['text']
+            parsed.append(Publication(text=text))
+        return parsed
