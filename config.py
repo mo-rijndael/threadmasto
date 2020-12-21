@@ -12,7 +12,6 @@ class Bridge:
     """связываем место тыбзинга и место постинга"""
     source: modules.Source
     destination: modules.Destination
-    last_post_time: float
     last_activation: float
     period: int
 
@@ -23,7 +22,6 @@ class Bridge:
         print(source, destination, period)
         self.source = source
         self.destination = destination
-        self.last_post_time = time.time()
         self.last_activation = time.time()
         self.period = period
 
@@ -34,9 +32,8 @@ class Bridge:
 
     def activate(self):
         now = time.time()
-        print(now)
+        posts = self.source.get(self.last_activation)
         self.last_activation = now
-        posts = self.source.get(self.last_post_time)
         for p in posts:
             self.destination.publish(p)
 
