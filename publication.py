@@ -13,6 +13,19 @@ class AttachmentType(IntEnum):
     POLL = 5
 
 
+class Poll:
+    title: str
+    variants: List[str]
+    is_anonymous: bool
+    is_multiple: bool
+
+    def __init__(self, title: str, variants: List[str], is_anonymous=False, is_multiple=False):
+        self.title = title
+        self.variants = variants
+        self.is_anonymous = is_anonymous
+        self.is_multiple = is_multiple
+
+
 class Attachment:
     link: Optional[str]
     _file_name: Optional[str]
