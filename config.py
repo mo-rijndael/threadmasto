@@ -34,6 +34,7 @@ class Bridge:
 
     def activate(self):
         now = time.time()
+        print(now)
         self.last_activation = now
         posts = self.source.get(self.last_post_time)
         for p in posts:
