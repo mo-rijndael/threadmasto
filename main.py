@@ -4,7 +4,6 @@ import sys
 import os
 from getpass import getuser
 from functools import reduce
-import operator
 
 from config import BridgeConfig, Bridge
 from exceptions import InvalidConfig
@@ -23,7 +22,7 @@ def load_configuration(config_dir: str) -> BridgeConfig:
             if c.endswith('.yaml') or c.endswith('.yml'):
                 parsed.append(BridgeConfig(config_dir + c))
 
-        return reduce(operator.add, parsed)
+        return reduce(BridgeConfig.update, parsed)
     else:
         raise InvalidConfig("config directory not exists", config_dir)
 

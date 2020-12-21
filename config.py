@@ -99,9 +99,8 @@ class BridgeConfig:
             bridges.append(Bridge(source, destination, interval))
         return bridges
 
-    def __add__(self, other):
-        return BridgeConfig(
-                dict(**self.sources, **other.sources),
-                dict(**self.sources, **other.sources),
-                [*self.raw_bridges, *other.raw_bridges],
-                )
+    def update(self, other: 'BridgeConfig'):
+        self.sources.update(other.sources)
+        self.destinations.update(other.destinations)
+        self.raw_bridges.extend(other.raw_bridges)
+        return self
