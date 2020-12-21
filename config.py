@@ -13,7 +13,7 @@ class Bridge:
     source: modules.Source
     destination: modules.Destination
     last_activation: float
-    period: int
+    interval: int
 
     def __init__(self,
                  source: modules.Source,
@@ -23,11 +23,11 @@ class Bridge:
         self.source = source
         self.destination = destination
         self.last_activation = time.time()
-        self.period = period
+        self.interval = period
 
     def time_to_activation(self) -> float:
         now = time.time()
-        activation = self.last_activation + self.period
+        activation = self.last_activation + self.interval
         return activation - now
 
     def activate(self):
@@ -91,7 +91,6 @@ class BridgeConfig:
                 source = self.sources[b['source']]
                 destination = self.destinations[b['destination']]
                 interval = b['interval']
-                # TODO: rename to interval everywhere
             except KeyError as e:
                 logging.fatal(f"Invalid bridge definition. "
                               f"Missing field {e.args[0]}")
