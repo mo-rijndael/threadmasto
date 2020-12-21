@@ -1,8 +1,12 @@
 import vk
 
 from exceptions import InvalidConfig
-from publication import Publication
+from publication import Publication, Attachment
 from . import Source
+
+
+def parse_attachment():
+    ...
 
 
 @Source.register("vk")
@@ -29,7 +33,6 @@ class VKSource(Source):
             self.id = id_or_domain
 
     def get(self, after_timestamp: float) -> list:
-        print("getting after:", after_timestamp)
         posts = self.api.wall.get(owner_id=self.id, count=100, filter='owner')
         posts = filter(lambda p: p['date'] > after_timestamp, posts['items'])
         parsed = []
