@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Type
 import os
 from importlib import import_module
 import logging
@@ -7,8 +7,8 @@ import logging
 from publication import Publication
 
 
-sources: Dict[str, 'Source'] = dict()
-destinations: Dict[str, 'Destination'] = dict()
+sources: Dict[str, 'Source.__class__'] = dict()
+destinations: Dict[str, 'Destination.__class__'] = dict()
 
 
 class Destination(ABC):
