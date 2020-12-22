@@ -5,7 +5,7 @@ from enum import IntEnum
 import requests
 
 
-class AttachmentType(IntEnum):
+class FileType(IntEnum):
     AUDIO = 1
     PICTURE = 2
     VIDEO = 3
@@ -19,7 +19,8 @@ class Poll:
     is_anonymous: bool
     is_multiple: bool
 
-    def __init__(self, title: str, variants: List[str], is_anonymous=False, is_multiple=False):
+    def __init__(self, title: str, variants: List[str],
+                 is_anonymous=False, is_multiple=False):
         self.title = title
         self.variants = variants
         self.is_anonymous = is_anonymous
