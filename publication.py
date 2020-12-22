@@ -10,7 +10,6 @@ class FileType(IntEnum):
     PICTURE = 2
     VIDEO = 3
     CUSTOM = 4
-    POLL = 5
 
 
 class Poll:
