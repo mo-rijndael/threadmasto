@@ -1,3 +1,5 @@
+from typing import Dict, Any
+
 import vk
 
 from exceptions import InvalidConfig
@@ -5,7 +7,7 @@ from publication import Publication, Attachment
 from . import Source
 
 
-def parse_attachment():
+def parse_attachment(raw: Dict[str, Any]) -> Attachment:
     ...
 
 
