@@ -40,6 +40,10 @@ class FileAttach:
             raise ValueError("Link OR path. Not both, not none")
         self.link = link
         self._file_name = file_name
+        self.type = type
+
+    def __repr__(self):
+        return f"[{self.type}] {self.link if self.link else self._file_name}"
 
     def _download(self):
         if self.link and not self._fd:
@@ -76,3 +80,6 @@ class Publication:
             attachments = list()
         self.plain_text = text
         self.attachments = attachments
+
+    def __repr__(self):
+        return f"{self.plain_text}\n{self.attachments}"
