@@ -18,4 +18,4 @@ class TestDest(Destination):
         pass
 
     def publish(self, post: Publication):
-        print("publishing...", post.plain_text, post.attachments)
+        print(post)
