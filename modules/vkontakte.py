@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Union
 import operator
 
 import vk
@@ -26,7 +26,7 @@ def add_line(text: str, line: str):
     return text + '\n' + line
 
 
-def parse_attachment(raw: Dict[str, Any]) -> FileAttach:
+def parse_attachment(raw: Dict[str, Any]) -> Union[FileAttach, Poll]:
     type = raw['type']
     object = raw[type]
     if type == 'photo':
