@@ -43,7 +43,7 @@ class FileAttach:
         self.type = type
 
     def __repr__(self):
-        return f"[{self.type}] {self.link if self.link else self._file_name}"
+        return f"[{self.type.name}] {self.link if self.link else self._file_name}"
 
     def _download(self):
         if self.link and not self._fd:
