@@ -97,6 +97,5 @@ class VKSource(Source):
         posts = filter(lambda p: p['date'] > after_timestamp, posts['items'])
         parsed = []
         for post in posts:
-            text = post['text']
-            parsed.append(Publication(text=text))
+            parsed.append(parse_post(post))
         return parsed
