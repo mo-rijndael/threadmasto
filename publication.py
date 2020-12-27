@@ -26,12 +26,13 @@ class Poll:
         self.is_multiple = is_multiple
 
 
-class Attachment:
+class FileAttach:
+    type: FileType
     link: Optional[str]
     _file_name: Optional[str]
     _fd = None
 
-    def __init__(self,
+    def __init__(self, type, *,
                  link: Optional[str] = None,
                  file_name: Optional[str] = None):
 
@@ -68,7 +69,7 @@ class Attachment:
 
 class Publication:
     plain_text: str
-    attachments: List[Attachment]
+    attachments: List[FileAttach]
 
     def __init__(self, text="", attachments=None):
         if attachments is None:
