@@ -3,7 +3,7 @@ from typing import Dict, Any, List, Tuple
 from mastodon import Mastodon
 import requests
 
-from publication import Publication, Poll, FileAttach
+from publication import Publication, Poll, FileAttach, FileType
 from . import Destination
 
 
