@@ -81,7 +81,11 @@ class MastodonDestination(Destination):
         else:
             uploaded_ids = []
             for i in post.attachments:
-                uploaded_ids.append(self._upload_attachment(i)['id'])
+                if i.type == FileType.CUSTOM:
+                    post.plain_text += '\n' + i.link if i.link else '[BROKEN ATTACH]'
+                uploaded = self._upload_attachment(i)
+                if uploaded:
+                    uploaded_ids.append(uploaded)
             published = self.api.status_post(post.plain_text,
                                              media_ids=uploaded_ids)
         return published
