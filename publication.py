@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from tempfile import NamedTemporaryFile
 from enum import IntEnum
 
@@ -73,7 +73,7 @@ class FileAttach:
 
 class Publication:
     plain_text: str
-    attachments: List[FileAttach]
+    attachments: List[Union[FileAttach, Poll]]
 
     def __init__(self, text="", attachments=None):
         if attachments is None:
