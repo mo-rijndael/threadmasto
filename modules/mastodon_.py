@@ -77,7 +77,7 @@ class MastodonDestination(Destination):
             poll = self.api.make_poll(raw.variants, multiple=raw.is_multiple)
             published = self.api.status_post(raw.title,
                                              poll=poll,
-                                             in_reply_to=reply_to)
+                                             in_reply_to_id=reply_to)
         else:
             uploaded_ids = []
             for i in post.attachments:
@@ -87,7 +87,8 @@ class MastodonDestination(Destination):
                 if uploaded:
                     uploaded_ids.append(uploaded)
             published = self.api.status_post(post.plain_text,
-                                             media_ids=uploaded_ids)
+                                             media_ids=uploaded_ids,
+                                             in_reply_to_id=reply_to)
         return published
 
     def publish(self, poll: Publication):
