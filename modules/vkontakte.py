@@ -26,49 +26,6 @@ def add_line(text: str, line: str):
     return text + '\n' + line
 
 
-def parse_attachment(raw: Dict[str, Any]) -> Union[FileAttach, Poll]:
-    type = raw['type']
-    object = raw[type]
-    if type == 'photo':
-        return FileAttach(FileType.PICTURE, link=object['sizes'][-1]['url'])
-    if type == 'video':
-        raise NeedExpand(object['player'])
-    if type == 'audio':
-        return FileAttach(FileType.AUDIO, link=object['url'])
-    if type == 'doc':
-        return FileAttach(FileType.CUSTOM, link=object['url'])
-    if type == 'link':
-        raise NeedExpand(object['url'])
-    if type == 'album':
-        raise NeedExpand('https://vk.com/album'
-                         f'{object["owner_id"]}_{object["id"]}')
-    if type == 'poll':
-        return Poll(object['question'],
-                    list(map(operator.itemgetter('text'), object['answers'])),
-                    object['anonymous'],
-                    object['multiple']
-                    )
-    raise UnsupportedAttachment(type)
-
-
-def parse_post(raw: Dict[str, Any]) -> Publication:
-    text = raw['text']
-    attachments = []
-    for a in raw['attachments']:
-        try:
-            attachments.append(parse_attachment(a))
-        except NeedExpand as ex:
-            text = add_line(text, ex.adding_line)
-        except UnsupportedAttachment as ex:
-            id = raw['id']
-            owner_id = raw['owner_id']
-            original = f"https://vk.com/wall{owner_id}_{id}"
-            text = add_line(text, f"Unsupported attachment type '{ex.type}'."
-                                  " You may want look to original: "
-                                  f"{original}")
-    return Publication(text, attachments)
-
-
 @Source.register("vk")
 class VKSource(Source):
     token: str
@@ -97,5 +54,51 @@ class VKSource(Source):
         posts = filter(lambda p: p['date'] > after_timestamp, posts['items'])
         parsed = []
         for post in posts:
-            parsed.append(parse_post(post))
+            parsed.append(self.parse_post(post))
         return parsed
+
+    def parse_attachment(self, raw: Dict[str, Any]) -> Union[FileAttach, Poll]:
+        type = raw['type']
+        object = raw[type]
+        if type == 'photo':
+            return FileAttach(FileType.PICTURE, link=object['sizes'][-1]['url'])
+        if type == 'video':
+            video = self.api.video.get(owner_id=object['owner_id'],
+                                       videos=[f'{object["owner_id"]}_{object["id"]}_{object["access_key"]}'])['items'][0]
+            raise NeedExpand(video['player'])
+        if type == 'audio':
+            return FileAttach(FileType.AUDIO, link=object['url'])
+        if type == 'doc':
+            return FileAttach(FileType.CUSTOM, link=object['url'])
+        if type == 'link':
+            raise NeedExpand(object['url'])
+        if type == 'album':
+            raise NeedExpand('https://vk.com/album'
+                             f'{object["owner_id"]}_{object["id"]}')
+        if type == 'poll':
+            return Poll(object['question'],
+                        list(map(operator.itemgetter('text'), object['answers'])),
+                        object['anonymous'],
+                        object['multiple']
+                        )
+        raise UnsupportedAttachment(type)
+
+    def parse_post(self, raw: Dict[str, Any]) -> Publication:
+        text = raw['text']
+        attachments = []
+        for a in raw['attachments']:
+            try:
+                attachments.append(self.parse_attachment(a))
+            except NeedExpand as ex:
+                text = add_line(text, ex.adding_line)
+            except UnsupportedAttachment as ex:
+                id = raw['id']
+                owner_id = raw['owner_id']
+                original = f"https://vk.com/wall{owner_id}_{id}"
+                text = add_line(text, f"Unsupported attachment type '{ex.type}'."
+                                      " You may want look to original: "
+                                      f"{original}")
+            if len(attachments) == 1 and type(attachments[0]) is Poll:
+                if text == attachments[0].title:
+                    text = ''
+        return Publication(text, attachments)
