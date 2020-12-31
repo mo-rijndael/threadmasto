@@ -74,7 +74,7 @@ class MastodonDestination(Destination):
             -> Dict[str, Any]:
         if post.attachments and type(post.attachments[0]) is Poll:
             raw: Poll = post.attachments[0]
-            poll = self.api.make_poll(raw.variants, multiple=raw.is_multiple)
+            poll = self.api.make_poll(raw.variants, multiple=raw.is_multiple, expires_in=60*60*24*30)  # one month
             published = self.api.status_post(raw.title,
                                              poll=poll,
                                              in_reply_to_id=reply_to)
