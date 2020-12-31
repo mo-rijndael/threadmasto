@@ -13,7 +13,7 @@ def smart_cut(text: str, max_len: int) -> Tuple[str, str]:
         cut_index = max_len
     else:
         cut_index = index_of_space
-    return (text[:cut_index], text[cut_index:])
+    return text[:cut_index], text[cut_index:]
 
 
 def extract_head(post: Publication) -> Tuple:
@@ -21,13 +21,13 @@ def extract_head(post: Publication) -> Tuple:
         (head, tail) = smart_cut(post.plain_text, 500-len(' ->'))
         head = Publication(head)
         tail = Publication(tail, post.attachments)
-        return (head, tail)
+        return head, tail
     if len(post.attachments) > 4:
         head = post.attachments[:4]
         tail = post.attachments[4:]
         head = Publication(post.plain_text, head)
         tail = Publication(attachments=tail)
-        return (head, tail)
+        return head, tail
     for index, attach in enumerate(post.attachments):
         if type(attach) is Poll:
             head = Publication(attachments=[attach])
