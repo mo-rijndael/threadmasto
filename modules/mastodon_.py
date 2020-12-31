@@ -62,7 +62,7 @@ class MastodonDestination(Destination):
         self.api = api
 
     def _upload_attachment(self, attach: FileAttach):
-        req = requests.post("https://mastodon.example/api/v1/media",
+        req = requests.post(f"{self.api.api_base_url}/api/v1/media",
                             headers={"Authorization":
                                      f"Bearer {self.api.access_token}"},
                             files={'file': attach.fd}
