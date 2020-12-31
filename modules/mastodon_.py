@@ -32,8 +32,10 @@ def extract_head(post: Publication) -> Tuple:
         if type(attach) is Poll:
             head = Publication(attachments=[attach])
             post.attachments.pop(index)
-            return (head, post)
-    return (post, None)
+            if not post.plain_text and not post.attachments:
+                post = None
+            return head, post
+    return post, None
 
 
 def split(post: Publication) -> List[Publication]:
