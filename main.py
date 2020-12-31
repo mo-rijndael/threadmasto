@@ -43,7 +43,10 @@ def main():
             bridge.activate()
 
         nearest = min(bridges, key=Bridge.time_to_activation)
-        time.sleep(nearest.time_to_activation())
+        time_to_nearest = nearest.time_to_activation()
+        if time_to_nearest <= 0:
+            continue
+        time.sleep(time_to_nearest)
 
 
 if __name__ == "__main__":
