@@ -91,8 +91,8 @@ class MastodonDestination(Destination):
                                              in_reply_to_id=reply_to)
         return published
 
-    def publish(self, poll: Publication):
-        posts = split(poll)
+    def publish(self, post: Publication):
+        posts = split(post)
         current_id = self._publish_part(posts.pop(0))
 
         for p in posts:
