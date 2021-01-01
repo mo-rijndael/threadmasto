@@ -48,5 +48,5 @@ for m in filter(_is_module_name, os.listdir('modules')):
     try:
         import_module("modules."+name)
     except ImportError as e:
-        logging.error(f"module {name} possible missing depency "
+        logging.error(f"module {name} possible missing dependency "
                       f"{e.name}. Loading skipped")
