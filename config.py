@@ -9,7 +9,6 @@ import modules
 
 
 class Bridge:
-    """связываем место тыбзинга и место постинга"""
     source: modules.Source
     destination: modules.Destination
     last_activation: float
@@ -42,7 +41,6 @@ class Bridge:
 
 
 class BridgeConfig:
-    "сюда буим парсить короче"
     sources: Dict[str, modules.Source] = {}
     destinations: Dict[str, modules.Destination] = {}
     raw_bridges: List[Dict] = []
@@ -82,9 +80,6 @@ class BridgeConfig:
             self.raw_bridges = config_dict["bridges"]
 
     def make_bridges(self) -> List[Bridge]:
-        "нельзя создавать мосты до того,"
-        "как все конфиги будут считаны"
-        "к тому же класс конфига будет не нужен"
         bridges = []
         for b in self.raw_bridges:
             try:
