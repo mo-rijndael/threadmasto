@@ -19,7 +19,7 @@ def smart_cut(text: str, max_len: int) -> Tuple[str, str]:
 def extract_head(post: Publication) -> Tuple:
     if len(post.plain_text) > 500:
         (head, tail) = smart_cut(post.plain_text, 500-len(' ->'))
-        head = Publication(head)
+        head = Publication(head+' ->')
         tail = Publication(tail, post.attachments)
         return head, tail
     if len(post.attachments) > 4:
