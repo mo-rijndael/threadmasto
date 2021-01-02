@@ -24,6 +24,9 @@ class Destination(ABC):
             destinations[destination_name] = dest
         return decorator
 
+    def __str__(self):
+        return f"{self.__class__.__name__}"
+
 
 class Source(ABC):
     @abstractmethod
@@ -37,6 +40,9 @@ class Source(ABC):
                 raise ValueError("must inherit from Source class")
             sources[name] = source
         return decorator
+
+    def __str__(self):
+        return f"{self.__class__.__name__}"
 
 
 def _is_module_name(name: str):
