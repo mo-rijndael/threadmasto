@@ -1,6 +1,7 @@
 import time
 import logging
 from typing import List, Dict
+import traceback
 
 import yaml
 
@@ -31,10 +32,21 @@ class Bridge:
 
     def activate(self):
         now = time.time()
-        posts = self.source.get(self.last_activation)
+        try:
+            posts = self.source.get(self.last_activation)
+        except Exception as e:
+            logging.error(f"Bridge {self}."
+                          f" Source throws an error: {e}")
+            logging.debug(traceback.format_exc())
+            return
         self.last_activation = now
         for p in posts:
-            self.destination.publish(p)
+            try:
+                self.destination.publish(p)
+            except Exception as e:
+                logging.error(f"Bridge {self}."
+                              f" Destination throws an error: {e}")
+                logging.debug(traceback.format_exc())
 
     def ready(self) -> bool:
         return self.time_to_activation() <= 0
@@ -55,13 +67,14 @@ class BridgeConfig:
                 path = f"{file_name}/sources/{name}"
                 try:
                     type = source["type"]
-                    print(modules.sources[type](source))
                     self.sources[name] = modules.sources[type](source)
                 except InvalidConfig as e:
-                    e.file = path
+                    e.file = e.file or path
                     raise e
                 except KeyError:
                     raise InvalidConfig("No 'type' field.", path)
+                except Exception as e:
+                    raise InvalidConfig(f"Unexpected exception in constructor: {e}", path)
 
         if "destinations" in config_dict:
             for name, destination in config_dict["destinations"].items():
@@ -71,10 +84,12 @@ class BridgeConfig:
                     self.destinations[name] = \
                         modules.destinations[type](destination)
                 except InvalidConfig as e:
-                    e.file = path
+                    e.file = e.file or path
                     raise e
                 except KeyError:
                     raise InvalidConfig("No 'type' field.", path)
+                except Exception as e:
+                    raise InvalidConfig(f"Unexpected exception in constructor: {e}", path)
 
         if "bridges" in config_dict:
             self.raw_bridges = config_dict["bridges"]
