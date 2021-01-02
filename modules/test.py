@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from . import Source, Destination
 from publication import Publication
 
@@ -7,9 +9,9 @@ class TestSrc(Source):
     def __init__(self, config):
         pass
 
-    def get(self, _):
-        print("getting...")
-        return [Publication()]
+    def get(self, after: float):
+        print(f"getting after {datetime.fromtimestamp(after)} ({after})")
+        return [Publication(datetime.fromtimestamp(after).isoformat())]
 
 
 @Destination.register("test")
