@@ -1,14 +1,12 @@
 sources:
-        lmao:
-                type: vk
-                token:
-                target: -198326335
+  example:
+    type: test
 
 destinations:
-        gay:
-                type: test
+  example: #names can be same
+    type: test
 
 bridges:
-        - source: lmao
-          destination: gay
-          interval: 30
+        - source: example
+          destination: example
+          interval: 10
