@@ -51,6 +51,9 @@ class Bridge:
     def ready(self) -> bool:
         return self.time_to_activation() <= 0
 
+    def __repr__(self):
+        return f"{self.source} -> {self.destination}"
+
 
 class BridgeConfig:
     sources: Dict[str, modules.Source] = {}
