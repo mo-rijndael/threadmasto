@@ -25,6 +25,10 @@ class Poll:
         self.is_anonymous = is_anonymous
         self.is_multiple = is_multiple
 
+    def __repr__(self):
+        return f"Poll({self.title}:{self.variants},"\
+               f" anonymous:{self.is_anonymous}, multiple:{self.is_multiple})"
+
 
 class FileAttach:
     type: FileType
@@ -43,7 +47,7 @@ class FileAttach:
         self.type = type
 
     def __repr__(self):
-        return f"[{self.type.name}] {self.link if self.link else self._file_name}"
+        return f"FileAttach::{self.type.name} {self.link or self._file_name}"
 
     def _download(self):
         if self.link and not self._fd:
@@ -82,4 +86,4 @@ class Publication:
         self.attachments = attachments
 
     def __repr__(self):
-        return f"{self.plain_text}\n{self.attachments}"
+        return f"Publication({self.plain_text[:20]}... {self.attachments})"
