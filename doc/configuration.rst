@@ -56,9 +56,9 @@ Define bridge
 
 And finally, lets bind our sources and destinations. Bridges should be defined in section `bridges` as list of objects.
 Every bridge must contain fields:
-#. `source` - name of source
-#. `destination` - name of destination
-#. `interval` - bridge will be activated every <interval> seconds
+1. `source` - name of source
+2. `destination` - name of destination
+3. `interval` - bridge will be activated every <interval> seconds
 
 .. code-block:: yaml
         bridges:
