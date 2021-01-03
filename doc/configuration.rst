@@ -64,6 +64,7 @@ Every bridge must contain fields:
 - ``interval`` - bridge will be activated every <interval> seconds
 
 .. code-block:: yaml
+
         bridges:
                 - source: my_source
                   destination: my_destination
