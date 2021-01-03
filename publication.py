@@ -15,15 +15,15 @@ class FileType(IntEnum):
 class Poll:
     title: str
     variants: List[str]
-    is_anonymous: bool
-    is_multiple: bool
+    anonymous: bool
+    multiple: bool
 
     def __init__(self, title: str, variants: List[str],
-                 is_anonymous=False, is_multiple=False):
+                 anonymous=False, multiple=False):
         self.title = title
         self.variants = variants
-        self.is_anonymous = is_anonymous
-        self.is_multiple = is_multiple
+        self.anonymous = anonymous
+        self.multiple = multiple
 
     def __repr__(self):
         return f"Poll({self.title}:{self.variants},"\
