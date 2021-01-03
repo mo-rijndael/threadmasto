@@ -34,6 +34,7 @@ Sources are defined in section ``sources`` in YAML file. Every source has a name
 Also, source can take configuration, just write corresponding YAML in definition.
 
 .. code-block:: yaml
+
         sources:
                 my_source:
                         type: test
@@ -46,6 +47,7 @@ Define destinations
 Destinations are defined same as sources, but in section ``destinations``. Source and destination can have same names.
 
 .. code-block:: yaml
+
         destinations:
                 my_destination:
                         type: test
