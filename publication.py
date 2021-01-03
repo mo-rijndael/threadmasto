@@ -69,7 +69,7 @@ class FileAttach:
         if self._fd:
             return self._fd
         if self._file_name and not self.link:
-            return open(self._file_name)
+            return open(self._file_name, 'w+b')
         else:
             self._download()
             return self.fd
