@@ -25,12 +25,12 @@ All sources and destinations are in dynamic-loaded modules, so there is no need 
 Configuring
 ===========
 
-All configs are stored as YAML files in `modconf.d/` directory. There can be many YAML files, but one definition should be entirely in one file.
+All configs are stored as YAML files in ``modconf.d/`` directory. There can be many YAML files, but one definition should be entirely in one file.
 
 Define source
 -------------
 
-Sources are defined in section `sources` in YAML file. Every source has a name to bind it to bridge, and type field.
+Sources are defined in section ``sources`` in YAML file. Every source has a name to bind it to bridge, and type field.
 Also, source can take configuration, just write corresponding YAML in definition.
 
 .. code-block:: yaml
@@ -43,7 +43,7 @@ Also, source can take configuration, just write corresponding YAML in definition
 Define destinations
 -------------------
 
-Destinations are defined same as sources, but in section `destinations`. Source and destination can have same names.
+Destinations are defined same as sources, but in section ``destinations``. Source and destination can have same names.
 
 .. code-block:: yaml
         destinations:
@@ -54,11 +54,12 @@ Destinations are defined same as sources, but in section `destinations`. Source 
 Define bridge
 -------------
 
-And finally, lets bind our sources and destinations. Bridges should be defined in section `bridges` as list of objects.
+And finally, lets bind our sources and destinations. Bridges should be defined in section ``bridges`` as list of objects.
 Every bridge must contain fields:
-1. `source` - name of source
-2. `destination` - name of destination
-3. `interval` - bridge will be activated every <interval> seconds
+
+- ``source`` - name of source
+- ``destination`` - name of destination
+- ``interval`` - bridge will be activated every <interval> seconds
 
 .. code-block:: yaml
         bridges:
@@ -66,4 +67,4 @@ Every bridge must contain fields:
                   destination: my_destination
                   interval: 30 # every 30 seconds
 
-example configuration also can be found in `modconf.d/example.yml`
+example configuration also can be found in ``modconf.d/example.yml``
