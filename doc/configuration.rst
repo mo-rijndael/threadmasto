@@ -7,7 +7,9 @@ Sources and destinations
 Threadmasto is a crossposter, so, it copies content from some source to destination.
 Sources and destinations are usually "pointers" to account in social network.
 
-*if you want to implement your own source or destination, wait until I'll write docs for developers*
+if you want to implement your own source or destination, here_ is docs for developers
+
+.. _here: writing_modules.rst
 
 Bridges
 -------
