@@ -1,6 +1,6 @@
 from typing import Tuple, List
 
-import requests
+from telegrambotapiwrapper import Api
 
 from . import Destination
 from exceptions import InvalidConfig
@@ -48,7 +48,7 @@ def split(post: Publication):
 
 @Destination.register("telegram")
 class TelegramDest(Destination):
-    api_url: str
+    api: Api
     target: str
 
     def __init__(self, raw: dict):
@@ -58,7 +58,7 @@ class TelegramDest(Destination):
         except KeyError as e:
             raise InvalidConfig(f"Missing field {e.args[0]}")
 
-        self.api_url = f"https://api.telegram.org/bot{token}/"
+        self.api = Api(token=token)
         self.target = target if target.startswith("@") else f"@{target}"
 
     def _serialise_attachments(self, attachments: List[FileAttach]):
