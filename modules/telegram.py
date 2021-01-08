@@ -1,6 +1,7 @@
 from typing import Tuple, List
+from itertools import groupby
 
-from telegrambotapiwrapper import Api
+from telegrambotapiwrapper import Api, typelib
 
 from . import Destination
 from exceptions import InvalidConfig
@@ -30,10 +31,19 @@ def extract_head(post: Publication) -> tuple:
                 if not post.plain_text and not post.attachments:
                     post = None
                 return head, post
-        return post, None
+        attachments = [g for _, g in groupby(post.attachments,
+                                             lambda p: p.type if p.type != FileType.VIDEO else FileType.PICTURE)]
+        head = Publication(post.plain_text, attachments.pop(0))
+        if attachments:
+            tail = Publication(attachments=attachments.pop(0))
+        else:
+            tail = None
+        # господи прости меня за этот пиздец выше
+
+        return head, tail
 
 
-def split(post: Publication):
+def split(post: Publication) -> List[Publication]:
     posts = []
     splitting_now = post
     while True:
@@ -61,20 +71,64 @@ class TelegramDest(Destination):
         self.api = Api(token=token)
         self.target = target if target.startswith("@") else f"@{target}"
 
-    def _serialise_attachments(self, attachments: List[FileAttach]):
-        ...
+    @staticmethod
+    def _serialise_attachments(attachments: List[FileAttach]):
+        parsed = []
+        for i in attachments:
+            if i.type is FileType.PICTURE:
+                i = typelib.InputMediaPhoto(type='photo', media=i.link)
+            elif i.type is FileType.VIDEO:
+                i = typelib.InputMediaVideo(type='video', media=i.link)
+            elif i.type is FileType.AUDIO:
+                i = typelib.InputMediaAudio(type='audio', media=i.link)
+            elif i.type is FileType.CUSTOM:
+                i = typelib.InputMediaDocument(type='document', media=i.link)
+            parsed.append(i)
+        return parsed
 
     def _publish_poll(self, poll: Poll):
-        ...
+        self.api.send_poll(chat_id=self.target,
+                           question=poll.title,
+                           options=poll.variants,
+                           is_anonymous=poll.anonymous,
+                           allows_multiple_answers=poll.multiple,
+                           )
 
     def _publish_no_attach(self, post: Publication):
-        ...
+        self.api.send_message(chat_id=self.target, text=post.plain_text)
 
     def _publish_one_attach(self, post: Publication):
-        ...
+        attach = post.attachments[0]
+        if type(attach) is Poll:
+            self._publish_poll(attach)
+        elif attach.type == FileType.PICTURE:
+            self.api.send_photo(chat_id=self.target,
+                                photo=attach.link or attach.fd,
+                                caption=post.plain_text)
+        elif attach.type == FileType.VIDEO:
+            self.api.send_video(chat_id=self.target,
+                                video=attach.link or attach.fd,
+                                caption=post.plain_text)
+        elif attach.type == FileType.AUDIO:
+            self.api.send_audio(chat_id=self.target,
+                                audio=attach.link or attach.fd,
+                                caption=post.plain_text)
+        elif attach.type == FileType.CUSTOM:
+            self.api.send_document(chat_id=self.target,
+                                   document=attach.link or attach.fd,
+                                   caption=post.plain_text)
 
     def _publish_multi_attach(self, post: Publication):
-        ...
+        attachments = self._serialise_attachments(post.attachments)
+        self.api.send_media_group(chat_id=self.target,
+                                  media=attachments)
 
     def publish(self, publication: Publication):
-        ...
+        posts = split(publication)
+        for i in posts:
+            if not i.attachments:
+                self._publish_no_attach(i)
+            elif len(i.attachments) == 1:
+                self._publish_one_attach(i)
+            else:
+                self._publish_multi_attach(i)
