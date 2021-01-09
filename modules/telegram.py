@@ -127,6 +127,7 @@ class TelegramDest(Destination):
 
     def _publish_multi_attach(self, post: Publication):
         attachments = self._serialise_attachments(post.attachments)
+        attachments[0].caption = post.plain_text
         self.api.send_media_group(chat_id=self.target,
                                   media=attachments)
 
