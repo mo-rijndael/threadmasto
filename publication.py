@@ -27,7 +27,7 @@ class Poll:
 
     def __repr__(self):
         return f"Poll({self.title}:{self.variants},"\
-               f" anonymous:{self.is_anonymous}, multiple:{self.is_multiple})"
+               f" anonymous:{self.anonymous}, multiple:{self.multiple})"
 
 
 class FileAttach:
