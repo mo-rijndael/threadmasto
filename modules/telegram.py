@@ -1,5 +1,4 @@
 from typing import Tuple, List
-from itertools import groupby
 
 from telegrambotapiwrapper import Api, typelib
 
@@ -26,13 +25,21 @@ def extract_head(post: Publication) -> tuple:
             return head, tail
         for index, attach in enumerate(post.attachments):
             if type(attach) is Poll:
-                head = Publication(attachments=[attach])
-                post.attachments.pop(index)
-                if not post.plain_text and not post.attachments:
-                    post = None
-                return head, post
-        attachments = [g for _, g in groupby(post.attachments,
-                                             lambda p: p.type if p.type != FileType.VIDEO else FileType.PICTURE)]
+                if post.plain_text:
+                    tail = Publication(attachments=[attach])
+                    post.attachments.pop(index)
+                    if not post.plain_text and not post.attachments:
+                        post = None
+                    return post, tail
+                else:
+                    return post, None
+
+        attachments = {}
+        for i in post.attachments:
+            attachments.setdefault(i.type, []).append(i)
+        if FileType.PICTURE in attachments:
+            attachments[FileType.PICTURE].extend(attachments.get(FileType.VIDEO, []))
+        attachments = list(attachments.values())
         head = Publication(post.plain_text, attachments.pop(0))
         if attachments:
             tail = Publication(attachments=attachments.pop(0))
