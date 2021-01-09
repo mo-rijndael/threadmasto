@@ -15,7 +15,7 @@ def load_configuration(config_dir: str) -> BridgeConfig:
     if os.path.exists(config_dir) and os.path.isdir(config_dir):
         configs = os.listdir(config_dir)
         if not configs:
-            raise ValueError
+            raise InvalidConfig("No configs!")
         configs.sort()
         parsed = []
         for c in configs:
