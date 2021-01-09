@@ -97,7 +97,7 @@ class TelegramDest(Destination):
         self.api.send_poll(chat_id=self.target,
                            question=poll.title,
                            options=poll.variants,
-                           is_anonymous=poll.anonymous,
+                           is_anonymous=True,
                            allows_multiple_answers=poll.multiple,
                            )
 
