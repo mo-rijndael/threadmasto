@@ -98,7 +98,7 @@ class VKSource(Source):
                 text = add_line(text, f"Unsupported attachment type '{ex.type}'."
                                       " You may want look to original: "
                                       f"{original}")
-            if len(attachments) == 1 and type(attachments[0]) is Poll:
-                if text == attachments[0].title:
-                    text = ''
+        if len(attachments) == 1 and type(attachments[0]) is Poll:
+            if text == attachments[0].title:
+                text = ''
         return Publication(text, attachments)
