@@ -86,7 +86,7 @@ class VKSource(Source):
     def parse_post(self, raw: Dict[str, Any]) -> Publication:
         text = raw['text']
         attachments = []
-        for a in raw['attachments']:
+        for a in raw.get('attachments', []):
             try:
                 attachments.append(self.parse_attachment(a))
             except NeedExpand as ex:
