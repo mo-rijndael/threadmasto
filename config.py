@@ -39,7 +39,8 @@ class Bridge:
                           f" Source throws an error: {e}")
             logging.debug(traceback.format_exc())
             return
-        self.last_activation = now
+        finally:
+            self.last_activation = now
         for p in posts:
             try:
                 self.destination.publish(p)
