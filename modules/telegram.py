@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Tuple, List, Optional
 
 from telegrambotapiwrapper import Api, typelib
 
@@ -16,7 +16,7 @@ def smart_cut(text: str, max_len: int) -> Tuple[str, str]:
     return text[:cut_index], text[cut_index:]
 
 
-def extract_head(post: Publication) -> tuple:
+def extract_head(post: Publication) -> Tuple[Publication, Optional[Publication]]:
     if post.attachments:
         if len(post.plain_text) > 1024:
             head, tail = smart_cut(post.plain_text, 1024)
@@ -106,7 +106,7 @@ class TelegramDest(Destination):
 
     def _publish_one_attach(self, post: Publication):
         attach = post.attachments[0]
-        if type(attach) is Poll:
+        if isinstance(attach, Poll):
             self._publish_poll(attach)
         elif attach.type == FileType.PICTURE:
             self.api.send_photo(chat_id=self.target,

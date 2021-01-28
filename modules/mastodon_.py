@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 
 from mastodon import Mastodon
 import requests
@@ -16,11 +16,11 @@ def smart_cut(text: str, max_len: int) -> Tuple[str, str]:
     return text[:cut_index], text[cut_index:]
 
 
-def extract_head(post: Publication) -> Tuple:
+def extract_head(post: Publication) -> Tuple[Publication, Optional[Publication]]:
     if len(post.plain_text) > 500:
-        (head, tail) = smart_cut(post.plain_text, 500-len(' ->'))
-        head = Publication(head+' ->')
-        tail = Publication(tail, post.attachments)
+        (head_text, tail_text) = smart_cut(post.plain_text, 500-len(' ->'))
+        head = Publication(head_text+' ->')
+        tail = Publication(tail_text, post.attachments)
         return head, tail
     if len(post.attachments) > 4:
         head = post.attachments[:4]
